@@ -10,21 +10,25 @@ public class FormResponseDialog {
 
     private final long entityRuntimeId;
     private final String data;
-    private ResponseElementDialogButton clickedButton;//can be null
+    private final ResponseElementDialogButton clickedButton; // может быть null
     private final String sceneName;
     private final NPCRequestPacket.RequestType requestType;
     private final int actionType;
 
     public FormResponseDialog(NPCRequestPacket packet, AdvancedFormWindowDialog dialog) {
-        this.entityRuntimeId = packet.getRequestedEntityRuntimeId();
-        this.data = packet.getData();
-        try {
-            this.clickedButton = dialog.getButtons().get(packet.getSkinType());
-        } catch (IndexOutOfBoundsException e) {
-            this.clickedButton = null;
+        this.entityRuntimeId = packet.entityRuntimeId;
+        this.data = packet.data;
+        ResponseElementDialogButton button = null;
+        if (packet.requestType == NPCRequestPacket.RequestType.EXECUTE_ACTION) {
+            try {
+                button = dialog.getButtons().get(packet.skinType);
+            } catch (IndexOutOfBoundsException e) {
+                // button remains null if index is out of bounds
+            }
         }
-        this.sceneName = packet.getSceneName();
-        this.requestType = packet.getRequestType();
-        this.actionType = packet.getSkinType();
+        this.clickedButton = button;
+        this.sceneName = packet.sceneName;
+        this.requestType = packet.requestType;
+        this.actionType = packet.skinType;
     }
 }
